@@ -50,11 +50,30 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
+          pip install huggingface_hub -q
+
+          # Text files via git
           git clone https://bgokturk:$HF_TOKEN@huggingface.co/spaces/bgokturk/thyticket hf_space
-          cp app.py config.py fares.db requirements.txt hf_space/
+          cp app.py config.py requirements.txt hf_space/
           cd hf_space
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add app.py config.py fares.db requirements.txt
-          git diff --staged --quiet || git commit -m "update: fares.db [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+          git add app.py config.py requirements.txt
+          git diff --staged --quiet || git commit -m "update: dashboard files [$(date -u '+%Y-%m-%d %H:%M UTC')]"
           git push
+          cd ..
+
+          # fares.db via HF API (binary dosyaları düzgün handle eder)
+          python3 -c "
+import os
+from huggingface_hub import HfApi
+api = HfApi()
+api.upload_file(
+    path_or_fileobj='fares.db',
+    path_in_repo='fares.db',
+    repo_id='bgokturk/thyticket',
+    repo_type='space',
+    token=os.environ['HF_TOKEN'],
+)
+print('fares.db uploaded to HF Space')
+"
