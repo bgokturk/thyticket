@@ -51,7 +51,4 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           pip install huggingface_hub -q
-          huggingface-cli upload bgokturk/thyticket app.py         app.py         --repo-type space --token $HF_TOKEN
-          huggingface-cli upload bgokturk/thyticket config.py      config.py      --repo-type space --token $HF_TOKEN
-          huggingface-cli upload bgokturk/thyticket requirements.txt requirements.txt --repo-type space --token $HF_TOKEN
-          huggingface-cli upload bgokturk/thyticket fares.db       fares.db       --repo-type space --token $HF_TOKEN
+          python3 scripts/hf_upload.py
