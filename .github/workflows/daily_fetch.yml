@@ -64,16 +64,16 @@ jobs:
           cd ..
 
           # fares.db via HF API (binary dosyaları düzgün handle eder)
-          python3 -c "
+          python3 << 'PYEOF'
 import os
 from huggingface_hub import HfApi
 api = HfApi()
 api.upload_file(
-    path_or_fileobj='fares.db',
-    path_in_repo='fares.db',
-    repo_id='bgokturk/thyticket',
-    repo_type='space',
-    token=os.environ['HF_TOKEN'],
+    path_or_fileobj="fares.db",
+    path_in_repo="fares.db",
+    repo_id="bgokturk/thyticket",
+    repo_type="space",
+    token=os.environ["HF_TOKEN"],
 )
-print('fares.db uploaded to HF Space')
-"
+print("fares.db uploaded to HF Space")
+PYEOF
