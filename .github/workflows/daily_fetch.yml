@@ -1,0 +1,44 @@
+name: Daily Fare Fetch
+
+on:
+  schedule:
+    - cron: "0 6 * * *"   # Her gün 06:00 UTC = 09:00 Türkiye saati
+  workflow_dispatch:        # Manuel tetikleme için (test amaçlı)
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: playwright install chromium --with-deps
+
+      - name: Run fetcher
+        run: python fetcher.py
+
+      - name: Commit updated fares.db
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add fares.db
+          git diff --staged --quiet || git commit -m "chore: update fares.db [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+          git push
