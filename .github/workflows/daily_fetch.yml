@@ -45,3 +45,16 @@ jobs:
           git diff --staged --quiet || git commit -m "chore: update fares.db [$(date -u '+%Y-%m-%d %H:%M UTC')]"
           git pull --rebase origin main
           git push
+
+      - name: Push to HuggingFace Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git clone https://bgokturk:$HF_TOKEN@huggingface.co/spaces/bgokturk/thyticket hf_space
+          cp app.py config.py fares.db requirements.txt hf_space/
+          cd hf_space
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app.py config.py fares.db requirements.txt
+          git diff --staged --quiet || git commit -m "update: fares.db [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+          git push
