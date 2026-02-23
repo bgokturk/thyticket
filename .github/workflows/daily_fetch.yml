@@ -2,7 +2,7 @@ name: Daily Fare Fetch
 
 on:
   schedule:
-    - cron: "0 6 * * *"   # Her gün 06:00 UTC = 09:00 Türkiye saati
+    - cron: "45 6 * * *"   # Her gün 06:00 UTC = 09:00 Türkiye saati
   workflow_dispatch:        # Manuel tetikleme için (test amaçlı)
 
 jobs:
